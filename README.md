@@ -1,6 +1,6 @@
-# kademlia-dht
+# DHT
 
-**kademlia-dht** is a javascript, network-agnostic implementation of the
+**DHT** is a javascript, network-agnostic implementation of the
 [Distributed Hash Table](http://en.wikipedia.org/wiki/Distributed_hash_table)
 storage container abstraction, employing the
 [Kademlia](http://en.wikipedia.org/wiki/Kademlia) algorithms and data
@@ -14,7 +14,7 @@ network of interconnected nodes (eg. over the Internet), making it suitable
 to provide information to a large number of users. Typical usage of DHTs
 include file-sharing (eg. Bitorrent).
 
-**kademlia-dht** is implemented with Node.js, but does not depend on system
+**DHT** is implemented with Node.js, but does not depend on system
 resources, like the network. Instead, the implementation of the network layer
 (called by Kademlia the *Remote Procedure Calls*) is left to the user or
 higher-level libraries. That means this DHT implementation is theorically
