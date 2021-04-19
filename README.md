@@ -2,10 +2,11 @@
 
 **DHT** 是一个基于Typescript，网络无关的[Distributed Hash Table](http://en.wikipedia.org/wiki/Distributed_hash_table)在[Kademlia](http://en.wikipedia.org/wiki/Kademlia)算法和数据结构下的实现. 同时支持Node端和Web端.
 
-在本地节点视角，DHT就像一个哈希表。提供了两个主要的操作 `set(key, value)` 和 `get(key)` .
-DHT中的D，即分布式，是说这些键值对是存储在互联的节点网络中的.
+在本地节点视角: DHT就像一个哈希表。提供了两个主要的操作 `set(key, value)` 和 `get(key)` .
 
-值的一提的是，此处的DHT将网络层的RPC留给用户或第三方库.
+> DHT中的D，即分布式，是说这些键值对是存储在互联的节点网络中的.
+
+> 值的一提的是，此处的DHT将网络层的RPC留给用户或第三方库.
 
 ## TODO
 - the handling of time-driven behaviors: key/value pairs expiration, bucket refresh, replication, and pairs republish.
