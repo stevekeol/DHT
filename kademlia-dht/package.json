@@ -1,0 +1,47 @@
+{
+  "version": "0.1.0",
+  "name": "kademlia-dht",
+  "description": "Network-agnostic Kademlia Distributed Hash Table",
+  "keywords": [
+    "kademlia",
+    "dht",
+    "distributed",
+    "hash table",
+    "discovery",
+    "sharing"
+  ],
+  "homepage": "https://github.com/jeanlauliac/kademlia-dht",
+  "author": "Jean Lauliac <jean@lauliac.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeanlauliac/kademlia-dht"
+  },
+  "bugs": "https://github.com/jeanlauliac/kademlia-dht",
+  "directories": {
+    "doc": "./doc",
+    "man": "./man",
+    "lib": "./lib",
+    "bin": "./bin"
+  },
+  "main": "./lib",
+  "dependencies": {
+    "slide": "~1.1.5"
+  },
+  "devDependencies": {
+    "mocha": "~1.14.0",
+    "chai": "~1.8.1",
+    "sinon": "~1.7.3",
+    "sinon-chai": "~2.4.0",
+    "jslint": "~0.2.5",
+    "npmlog": "0.0.6"
+  },
+  "engines": {
+    "node": ">=0.10",
+    "npm": "1"
+  },
+  "scripts": {
+    "test": "mocha && jshint lib test",
+    "coverage": "istanbul cover _mocha -- -R spec"
+  },
+  "license": "MIT Expat"
+}
