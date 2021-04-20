@@ -9,7 +9,7 @@
 import { Bucket } from './bucket';
 import { Id } from './id';
 import { Contact } from './contact';
-import { LookupList } from './lookup-list';
+import { LookupList } from './lookupList';
 
 
 export default class RoutingTable implements DHT.RoutingTable {

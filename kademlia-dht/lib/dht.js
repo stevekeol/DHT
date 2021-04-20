@@ -85,10 +85,13 @@ Dht.prototype._bootstrapLookup = function (cb) {
 };
 
 Dht.prototype.bootstrap = function (seeds, cb) {
+    console.log('jiege: dht/bootstrap')
     if (seeds.length === 0)
-        return process.nextTick(function () {
-            return cb();
-        });
+        // return process.nextTick(function () {
+        //     return cb();
+        // });
+        return Promise.resolve().then(() => cb())
+
     var self = this;
     var payload = {id: this._routes.id};
     payload.targetId = payload.id;
