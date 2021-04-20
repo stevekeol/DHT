@@ -20,6 +20,7 @@ export default class RoutingTable implements DHT.RoutingTable {
   /**
    * 在路由表中，存储contact
    * @param {DHT.Contact} contact 联系人:id & endpoint
+   * @note 当bucket已满且不允许分割时，调用者需要检查返回contact的合法性，然后再尝试添加新contact
    */
   public store(contact: DHT.Contact) {
     if (contact.id.equal(this.id))
@@ -54,9 +55,72 @@ export default class RoutingTable implements DHT.RoutingTable {
     res.bucket.remove(contact);
   }
 
-  public find() {}
-  public toString() {}
-  private find() {}
+  /**
+   * 获取与给定id最接近的count个已知联系人
+   * 理想情况下,返回离给定id最近的bucket中所有的contacts;
+   * 如果没达到BUCKET_SIZE的大小，则需邻桶的配合;
+   * @param {DHT.Id}    id 节点id
+   * @param {number =  this.bucketSize} count 。。。
+   */
+  public find(id: DHT.Id, count: number = this.bucketSize) {
+    const list = new LookupList(id, count);
+    this.search(id, 0, this.root, count, list);
+    return list.getContacts();
+  }
+
+  /**
+   * 将XXX转换成字符串
+   * @param {number = 0} indent 缩进量
+   */
+  public toString(indent: number = 0) {
+    return nodeToString(this.root, '', indent);
+  }
+
+  /**
+   * 将节点转换成字符串
+   * @param {any}    node   待转换的节点
+   * @param {string} prefix 添加的前缀(若需要)
+   * @param {number} indent 缩进量
+   */
+  private nodeToString(node: any, prefix: string, indent: number) {
+    let res = '';
+    if (node instanceof Bucket) {
+        res += new Array(indent).join(' ') + node.toString(indent + 4) + '\n';
+    } else {
+        res += new Array(indent).join(' ') + '+ ' + prefix + '0:\n';
+        res += nodeToString(node.left, prefix + '0', indent + 4);
+        res += new Array(indent).join(' ') + '+ ' + prefix + '1:\n';
+        res += nodeToString(node.right, prefix + '1', indent + 4);
+    }
+    return res;
+  }
+
+  /**
+   * 左右子树中递归查找XXX
+   * @param {DHT.Contact}    id    [description]
+   * @param {number}         rank  [description]
+   * @param {DHT.Bucket}     node  [description]
+   * @param {number}         count [description]
+   * @param {DHT.LookupList} list  [description]
+   */
+  private search(id: DHT.Id, rank: number, node: DHT.Bucket, count: number, list: DHT.LookupList) {
+    if(node instanceof Bucket) {
+      list.insertMany(node.obtain());
+      return;
+    }
+    const self = this;
+    function findIn(main, other) {
+      self.search(id, rank + 1, main, count, list);
+      if(list.length < count) {
+        self.search(id, rank + 1, other, count, list);
+      }
+    }
+    if(id.at(rank)) {
+      findIn(node.right, node.left);
+    } else {
+      findIn(node.left, node.right);
+    }
+  }
 
   /**
    * 查找最接近给定ID的存储桶
