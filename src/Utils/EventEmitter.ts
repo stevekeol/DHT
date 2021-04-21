@@ -2,7 +2,7 @@
  * Simple EventEmitter in Typesript
  * Author: stevekeol
  * Reference: https://github.com/developit/mitt/blob/master/src/index.ts
- * Date: 2021-04-18 16:30
+ * Date: 2021-04-18 16:30 ~ 17:20
  */
 
 export type EventType = string | symbol;
