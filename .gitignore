@@ -4,7 +4,11 @@ dist
 dist-ssr
 *.local
 
+# temp test file
 ts-test.ts
+
+## reference
+kademlia-dht
 
 # production
 /main
