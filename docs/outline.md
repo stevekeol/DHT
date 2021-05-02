@@ -30,6 +30,8 @@ const spawn(endpoint, seeds, callback) {
 ```
 > 【疑问】: 创建的节点,endpoint采用ip:port的话...
 
+## `MockRpc.spawn(endpoint, (err, rpc) => {})` 
+
 ## 
 
 + MockRpc.spwan(endpoint, seeds, cb):
