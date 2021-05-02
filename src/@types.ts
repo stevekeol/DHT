@@ -8,7 +8,7 @@ declare namespace DHT {
   namespace Contact {
     //
   }
-  namespace Id {
+  interface Id {
     //
   }
   namespace Bucket {
@@ -18,3 +18,5 @@ declare namespace DHT {
     //
   }
 }
+
+export default DHT;
