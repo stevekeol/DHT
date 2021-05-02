@@ -12,6 +12,11 @@ export type Handlers = {
 
 }
 
+// declare interface MockRpc {
+//   on(event: 'hello', listener: (name: string) => void): this;
+//   on(event: string, listener: Function): this;
+// }
+
 // export default class MockRpc extends EventEmitter {
 //   constructor(public endpoint: Endpoint){
 //     super();
