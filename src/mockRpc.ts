@@ -1,3 +1,4 @@
+
 /**
  * Simple no-network RPC implementation, for testing purposes.
  * Author: stevekeol
@@ -12,24 +13,18 @@ export type Handlers = {
   //
 }
 
-// declare interface MockRpc {
+// interface MockRpc {
 //   on(event: 'hello', listener: (name: string) => void): this;
 //   on(event: string, listener: Function): this;
 // }
 
-// export default class MockRpc extends EventEmitter {
-//   constructor(public endpoint: Endpoint){
-//     super();
-//     handlers = {};
-//   }
-// }
-export default class MockRpc {
-  private handlers: Handlers;
-  private glNetwork: Map<string, string>;
+class MockRpc extends EventEmitter {
+  private handlers: Handlers = {};
+  private glNetwork: Map<string, string>; //待
   private readonly TIMEOUT: number = 500;
 
   constructor(public endpoint: Endpoint) {
-    this.handlers = {};
+    super();
     this.glNetwork[endpoint] = this;
   }
 
@@ -45,7 +40,7 @@ export default class MockRpc {
 
   private error(code, message) {
     const err = new Error(message) as any;
-    err.code = code;
+    err.code = code; 
     return err;
   }  
 
@@ -102,3 +97,5 @@ export default class MockRpc {
     this.handlers[message] = handler;
   }
 }
+
+export default MockRpc;
