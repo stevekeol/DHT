@@ -9,7 +9,7 @@ import EventEmitter from './Utils/EventEmitter';
 
 export type Endpoint = string;
 export type Handlers = {
-
+  //
 }
 
 // declare interface MockRpc {

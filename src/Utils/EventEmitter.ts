@@ -4,6 +4,7 @@
  * Reference: https://github.com/developit/mitt/blob/master/src/index.ts
  * Date: 2021-04-18 16:30 ~ 17:20
  */
+
 type EventType = string | symbol;
 type Handler = (event: EventType) => void;
 type EventHandlerList = Array<Handler>;
@@ -13,7 +14,7 @@ interface EventEmitter {
   events: EventHandlerMap;
   on(type: EventType, handler: Handler): void;
   off(type: EventType, handler: Handler): void;
-  emit<T = any>(type: EventType, event?: T): void;
+  emit<T>(type: EventType, event?: T): void;
 }
 
 class EventEmitter implements EventEmitter {
@@ -56,7 +57,7 @@ class EventEmitter implements EventEmitter {
    */
   emit<T = any>(type: EventType, event: T) {
     const handlers = this.events.get(type) || [];
-    handlers.slice().map(handler => { handler(event); });
+    handlers.slice().map(handler => { handler(event) });
   }
 }
 
