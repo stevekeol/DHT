@@ -62,4 +62,39 @@ export default class Bucket {
       return this._store;
     return this._store.slice(0, n);
   }
+
+  /**
+   * 根据每个contact的id的前nth位，将bucket切割成left和right两个bucket. 
+   * @param {number} nth   id的前n位(前缀位数)
+   * @param {Bucket} left  切割后的左子桶
+   * @param {Bucket} right 切割后的右子桶
+   */
+  split(nth: number, left: Bucket, right: Bucket) {
+    this._store.forEach(contact => {
+      contact.id.at(nth) ? right.store(contact) : left.store(contact);
+    })
+  }
+
+  /**
+   * 将bucket中所有contact缀连并转成字符串
+   * @TODO 待实现
+   */
+  toString() {
+    console.log('Bucket.toString() is on the road...');
+  }
+
+  /**
+   * 获取bucket当前的大小
+   * @TODO Proxy可能更简单?
+   */
+  get length() {
+    return this._store.length;
+  }
+
+  /**
+   * 获取bucket中最旧的contact
+   */
+  get oldest() {
+    return this._store.length === 0 ? null : this._store[0];
+  }
 }
