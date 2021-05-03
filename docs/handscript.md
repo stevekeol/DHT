@@ -14,7 +14,9 @@
 return Promise.resolve().then(() => cb())
 ```
 
+> 是否可以参考 [ipfs中dht的js实现](https://github.com/libp2p/js-libp2p-kad-dht)
 --- 
 
 ## How
 + Typescript中Buffer的使用
+
