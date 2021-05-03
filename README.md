@@ -4,6 +4,8 @@
 
 > 笔者正在制作[DHT的动画视频]()，力图更精简，更易理解的阐明DHT的底层逻辑和实现机制;
 
+> 不要脸的自信：该DHT库，stars > 2000 before 2022.10.01
+
 **DHT** 是一个基于Typescript，网络无关的[Distributed Hash Table](http://en.wikipedia.org/wiki/Distributed_hash_table)在[Kademlia](http://en.wikipedia.org/wiki/Kademlia)算法和数据结构下的实现. 同时支持Node端和Web端.
 
 在本地节点视角: DHT就像一个哈希表。提供了两个主要的操作 `set(key, value)` 和 `get(key)` .
@@ -30,3 +32,11 @@
 > 参考业界优秀论文，改进代码
 
 - 以TS中优秀精简的写法重构代码;
+
+## TODO - 第三里程碑
+> 要不，参考下 [ipfs](https://github.com/libp2p/js-libp2p-kad-dht) ？
+
+- 提供`Random Walk`服务;
+- 提供`Peer Discovery`服务;
+- 提供`Content Routing`服务;
+- 提供`Peer Routing`服务;
