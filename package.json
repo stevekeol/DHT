@@ -1,0 +1,32 @@
+{
+  "name": "DHT",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "author": {
+    "name": "stevekeol",
+    "email": "stevekeol.x@gmail.com"
+  },
+  "description": "A simple implement of DHT(kademlia) in typescript",
+  "keywords": [
+    "blockchain",
+    "consensus",
+    "DHT",
+    "kademlia",
+    "typescript"
+  ],
+  "repository": {
+    "url": "https://https://github.com/stevekeol/DHT"
+  },
+  "productName": "DHT(kademlia)",
+  "scripts": {
+    //待(rollup)
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "util": "^0.12.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.2",
+  }
+}

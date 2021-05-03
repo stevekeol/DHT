@@ -13,3 +13,8 @@
 // });
 return Promise.resolve().then(() => cb())
 ```
+
+--- 
+
+## How
++ Typescript中Buffer的使用
