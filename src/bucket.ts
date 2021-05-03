@@ -86,6 +86,7 @@ export default class Bucket {
   /**
    * 获取bucket当前的大小
    * @TODO Proxy可能更简单?
+   * @HoToUse (new Bucket()).length
    */
   get length() {
     return this._store.length;
