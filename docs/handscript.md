@@ -1,6 +1,6 @@
 ## MockRpc的优雅改写之路
 + [√] EventEmitter的class改写;
-+ [] 
++ [] [DingTalk-sdk的类型系统和代码架构](https://github.com/Luncher/alipay/blob/master/src/config/index.ts)
 
 
 ---
