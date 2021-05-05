@@ -24,15 +24,13 @@ export default class LookupList {
    * 找出该list中未处理的一个conatct
    */
   next() {
-
-  }
-
-  /**
-   * 使用新发现的contacts更新该list
-   * @param {Array<Contact>} contacts [description]
-   */
-  insertMany(contacts: Array<Contact>) {
-
+    for(let i = 0; i < this.slots.length; i++) {
+      if(!this.slots[i].processed) {
+        this.slots[i].processed = true;
+        return this.slots[i].contact;
+      }
+    }
+    return null;
   }
 
   /**
@@ -43,7 +41,34 @@ export default class LookupList {
    * @param {Contact} contact [description]
    */
   insert(contact: Contact) {
+    for(let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      const distance = this.id.compareDistance(contact.id, slot.contact.id);
+      if(distance === 0) return;
+      if(distance < 0) continue;
+      this.slots.splice(i, 0, {
+        contact,
+        processed: false
+      });
+      if(this.slots.length > this._capacity)
+        this.slots.pop();
+      return;
+    }
+    if(this.slots.length < this._capacity)
+      this.slots.push({
+        contact,
+        processed: false
+      })
+  }
 
+  /**
+   * 使用新发现的contacts更新该list
+   * @param {Array<Contact>} contacts [description]
+   */
+  insertMany(contacts: Array<Contact>) {
+    for(let i = 0; i < contacts.length; i++) {
+      this.insert(contacts[i]);
+    }
   }
 
   /**
@@ -53,14 +78,22 @@ export default class LookupList {
    * @return 成功丢弃则返回true
    */
   remove(contact: Contact) {
-
+    for(let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      const distance = this.id.compareDistance(contact.id, slot.contact.id);
+      if(distance > 0) return false;
+      if(distance < 0) continue;
+      this.slots.splice(i, 1);
+      return true;
+    }
+    return false;
   }
 
   /**
    * 获取所有已知的contacts
    */
   getContacts() {
-
+    return this.slots.map(slot => slot.contact);
   }
 
   /**
@@ -82,6 +115,14 @@ export default class LookupList {
    * @param {any} shortIds [description]
    */
   toString(shortIds: any) {
-    //
+    let res = '<[ ';
+    for (let i = 0; i < this.slots.length; ++i) {
+        res += this.slots[i].processed ? '[X]' : '[ ]';
+        res += this.slots[i].contact.toString(shortIds) + ' ';
+    }
+    if (this.slots.length < this._capacity)
+        res += ':' + (this._capacity - this.slots.length) + ': ';
+    res += ']>';
+    return res;    
   }
 } 
