@@ -4,8 +4,6 @@
 
 > 笔者正在制作[DHT的动画视频]()，力图更精简，更易理解的阐明DHT的底层逻辑和实现机制;
 
-> 不要脸的自信：该DHT库，stars > 2000 before 2022.10.01
-
 **DHT** 是一个基于Typescript，网络无关的[Distributed Hash Table](http://en.wikipedia.org/wiki/Distributed_hash_table)在[Kademlia](http://en.wikipedia.org/wiki/Kademlia)算法和数据结构下的实现. 同时支持Node端和Web端.
 
 在本地节点视角: DHT就像一个哈希表。提供了两个主要的操作 `set(key, value)` 和 `get(key)` .
