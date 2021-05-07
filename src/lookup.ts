@@ -3,7 +3,6 @@
  * Author: stevekeol
  * createDate: 2021-05-06 01:50
  */
-import util from 'util';
 import EventEmitter from './Utils/EventEmitter';
 import LookupList from './lookupList';
 

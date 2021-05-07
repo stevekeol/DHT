@@ -7,7 +7,6 @@
 import Id from './id';
 import Contact from './contact';
 
-
 /**
  * 存储contacts(头旧尾新)
  * contact = id + endpoint; endpoint 可变

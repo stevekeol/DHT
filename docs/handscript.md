@@ -20,3 +20,20 @@ return Promise.resolve().then(() => cb())
 ## How
 + Typescript中Buffer的使用
 
+## TODO
++ [] 覆盖toString
++ [] import { asyncMap } from 'slide';多个异步任务按序执行 （async/await?）
+```js
+  private async storeToMany(key, value, contacts, callback) {
+    const self = this;
+    contacts.forEach(contact => {
+      await self.storeTo(key, value, contact, callback);
+    })
+  }
+```
++ [] import {crypto} from 'crypto'; crypto.randomBytes和crypto.createHash的web原生替代;
+```js
+window.crypto.getRandomValues(array);
+```
++ [] Int16Array 和 NodeJS中的Buffer的类型对标和内置方法对标
+

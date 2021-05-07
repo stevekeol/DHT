@@ -12,10 +12,10 @@
  */
 
 import { asyncMap } from 'slide';
-import { Id } from './id';
-import { RoutingTable } from './routingTable';
-import { Lookup } from './lookup';
-import { Contact } from './contact';
+import Id from './id';
+import RoutingTable from './routingTable';
+import Lookup from './lookup';
+import Contact from './contact';
 
 const RPC_FUNCTIONS: ReadonlyArray<string> = ['ping', 'store', 'findNode', 'findValue', 'receive'];
 
@@ -192,7 +192,7 @@ export default class Dht implements DHT.Dht {
    * @param {Function} callback [description]
    */
   private storeTo(key, value, contact, callback) {
-    if(conatct.id.equal(this.routes.id)) {
+    if(contact.id.equal(this.routes.id)) {
       this.cache[key] = value;
       return process.nextTick(callback);
     }
@@ -211,10 +211,12 @@ export default class Dht implements DHT.Dht {
    * @param {[type]}   contacts [description]
    * @param {Function} callback [description]
    */
-  private storeToMany(key, value, contacts, callback) {
+  private async storeToMany(key, value, contacts, callback) {
     const self = this;
-    asyncMap(contacts, (contact, callback) => self.storeTo(key, value, contact, callback), callback);
-  }  
+    contacts.forEach(contact => {
+      await self.storeTo(key, value, contact, callback);
+    })
+  }
 
   /**
    * 如果本地可用,就同步获取值

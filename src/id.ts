@@ -1,8 +1,7 @@
 /**
  * @TODO 待移除crypto和util
  */
-import crypto from 'crypto';
-import util from 'util';
+import {crypto} from 'crypto';
 
 export default class Id {
   static readonly SIZE: number = 20;
@@ -27,8 +26,8 @@ export default class Id {
    * @TODO 待检验new Int8Array(buffer)是否位数和type有效
    */
   distanceTo(other: Id) {
-    let buffer = new ArrayBuffer(Id.SIZE);
-    let res = new Int8Array(buffer);
+    let buffer = new ArrayBuffer(Id.SIZE * 2);
+    let res = new Int16Array(buffer);
 
     for(let i = 0; i < Id.SIZE; i++) {
       res[i] = this.buf[i] ^ other.buf[i];
@@ -96,7 +95,7 @@ export default class Id {
   toString(short: boolean) {
     let str = this.buf.toString('hex');
     if(short) {
-      return util.format('%s..%s', str.slice(0, Id.SHORT_STR_PRE_LEN), str.slice(str.length - Id.SHORT_STR_SUF_LEN));
+      return `${str.slice(0, Id.SHORT_STR_PRE_LEN)}..${str.slice(str.length - Id.SHORT_STR_SUF_LEN)}`;
     }
     return str;
   }
@@ -142,8 +141,8 @@ export default class Id {
    * @TODO TS中buffer的使用
    */
   static zero() {
-    let buffer = new ArrayBuffer(Id.SIZE);
-    let buf = new Int8Array(buffer);
+    let buffer = new ArrayBuffer(Id.SIZE * 2);
+    let buf = new Int16Array(buffer);
     for(let i = 0; i < Id.SIZE; i++) {
       buf[i] = 0;
     }
