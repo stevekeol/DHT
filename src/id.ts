@@ -1,54 +1,79 @@
 /**
  * @TODO 待移除crypto和util
  */
-import {crypto} from 'crypto';
+type Bit = 1 | 0; // 需统一暴露
 
 export default class Id {
   static readonly SIZE: number = 20;
   static readonly BIT_SIZE: number = Id.SIZE * 8;
-  static readonly SHORT_STR_PRE_LEN: number = 5;
-  static readonly SHORT_STR_SUF_LEN: number = 2;
+  static readonly SHORT_STR_PRE_LEN: number = 5; //id缩写前缀位数
+  static readonly SHORT_STR_SUF_LEN: number = 2; //id缩写后缀位数
+
+  buf: Uint8Array;
 
   /**
    * [constructor description]
    * @param {Buffer} public buf [description]
    * @TODO buffer在TS中的类型应该怎么定义?
+   * @note 不同于Nodejs环境下通过id的Buffer直接构建该id; 
+   *       web环境下设定为id的String构建id，同时内部初始化ArrayBuffer,用于异或计算等;
    */
-  constructor(public buf: Buffer) {
-    if(buf.length !== Id.SIZE) {
-      throw new Error('invalid buffer');
+  constructor(public id: string) {
+    if(id.length !== Id.SIZE) {
+      throw new Error('invalid id');
     };
+    this.buf = Id.getIdBuf(id);
   }
 
   /**
-   * 计算表示为Buffer的两个节点ID之间的距离
+   * 将string转换成ArrayBuffer
+   * @param {string} id 节点的原始id
+   * @return {Uint8Array} buf 节点id对应的ArrayBuffer
+   * @note 采用ArrayBuffer是为了满足js中按位异或的操作(不能直接异或字符)
+   */
+  static getIdBuf(id: string) {
+    if(id.length !== Id.SIZE) {
+      throw new Error('invalid id');
+    };    
+    let buffer = new ArrayBuffer(Id.SIZE);
+    let dataView = new Uint8Array(buffer);
+    for(let i = 0; i < Id.SIZE; i++) {
+      /** 取出每个字符的ASCII码依次放在ArrayBuffer中 */
+      dataView[i] = String.prototype.charCodeAt(i);
+    }
+    return dataView;
+  }
+
+  /**
+   * 计算表示为ArrayBuffer的两个节点id之间的距离
    * @param {Id} other 待比较的contact
-   * @TODO 待检验new Int8Array(buffer)是否位数和type有效
+   * @return {Uint8Array} dataView 距离值对应的ArrayBuffer
    */
   distanceTo(other: Id) {
-    let buffer = new ArrayBuffer(Id.SIZE * 2);
-    let res = new Int16Array(buffer);
-
+    let buffer = new ArrayBuffer(Id.SIZE);
+    let dataView = new Uint8Array(buffer);
     for(let i = 0; i < Id.SIZE; i++) {
-      res[i] = this.buf[i] ^ other.buf[i];
+      /** 每个字符对应的ASCII码依次按位异或 */
+      dataView[i] = this.buf[i] ^ other.buf[i];
     }
-    return res;
+    return dataView;
   }
 
   /**
-   * 比较本地id和给定的两个id: first和second的距离谁更近
+   * 比较本地id和给定的两个id(first和second)的距离谁更近
+   * first距离更远,返回1;
+   * second距离更远，返回-1;
    * 距离相等,返回0;
-   * first距离更近,返回1;
-   * second距离更近，返回-1;
-   * @param {Id} first  待比较距离的Id
-   * @param {Id} second 待比较距离的Id
+   * @param {Id} left  待比较距离的Id
+   * @param {Id} right 待比较距离的Id
+   * @return {Number} 
    */
-  compareDistance(first: Id, second: Id) {
+  compareDistance(left: Id, right: Id) {
     for(let i = 0; i < Id.SIZE; i++) {
-      let bt1 = this.buf[i] ^ first.buf[i];
-      let bt2 = this.buf[i] ^ second.buf[i];
-      if(bt1 > bt2) return -1;
-      if(bt1 < bt2) return 1;
+      let bt1 = this.buf[i] ^ left.buf[i];
+      let bt2 = this.buf[i] ^ right.buf[i];
+      if(bt1 > bt2) return 1;
+      if(bt1 < bt2) return -1;
     }
     return 0;
   }
@@ -66,34 +91,40 @@ export default class Id {
   }
 
   /**
-   * 提取给定索引位置的bit
-   * @param {[type]} index 给定的索引位置
+   * 提取字符串形式的id对应的二进制串，对应的索引位置的bit位
+   * @param {number} index 字符串id对应二进制的索引位置
+   * @note 获取某个bit位的值的按位操作，骚!(@stevekeol)
+   * @note 主要用于前缀二叉树的判断处理
    */
   at(index: number) {
     return (this.buf[index / 8 | 0] & (1 << (7 - index % 8))) > 0;
   }
 
   /**
-   * 在给定的索引位置设置bit位
+   * 字符串id对应的二进制中，在给定的索引位置设置bit位
    * @param {number} index 给定的索引位置
-   * @param {number} bit   给定位置需要设置的bit值
+   * @param {Bit} bit   给定位置需要设置的bit值
    */
-  set(index: number, bit: number) {
-    let _index = index / 8 | 0;
+  set(index: number, bit: Bit) {
+    let miniIndex = index / 8 | 0;
     let mask = 1 << (7 - index % 8);
     if(bit) {
-      this.buf[_index] |= mask;
+      this.buf[miniIndex] |= mask;
     } else {
       this.buf[index] &= 255 ^ mask;
     }
   }
 
   /**
-   * 将本地ID转为16进制,可选择是否缩写
+   * 将本地id转为16进制,可选择是否缩写
    * @param {boolean} short 是否缩写
    */
   toString(short: boolean) {
-    let str = this.buf.toString('hex');
+    let str = '';
+    for(let i = 0; i < Id.SIZE; i++) {
+      let item = this.buf[i].toString(16);
+      str += item.length > 1 ? item : '0' + item;
+    }
     if(short) {
       return `${str.slice(0, Id.SHORT_STR_PRE_LEN)}..${str.slice(str.length - Id.SHORT_STR_SUF_LEN)}`;
     }
@@ -102,14 +133,17 @@ export default class Id {
 
   /**
    * 随机生成一个节点的标识符,并执行回调
-   * @param {Function} callback [description]
+   * @param {Function} callback 成功生成节点标识符后，待执行的回调
    */
-  static generate(callback) {
-    crypto.randomBytes(Id.SIZE, (err: Error, buf: Buffer) => {
-      if(err)
-        callback(err);
-      callback(null, new Id(buf));
-    });
+  static generate(callback: Function) {
+    function randomStr() {
+      const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      let id = '';
+      for (let i = 20; i > 0; --i) id += BASE58[Math.floor(Math.random() * BASE58.length)];
+      return id;
+    }
+
+    callback(null, new Id(randomStr()));
   }
 
   /**

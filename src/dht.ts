@@ -52,7 +52,7 @@ export default class Dht implements DHT.Dht {
    * @param {[type]}   opts     [description]
    * @param {Function} callback [description]
    */
-  public spawn(rpc: DHT.Rpc, seeds: Array<DHT.Dht>, opts: object, callback) {
+  public spawn(rpc: DHT.Rpc, seeds: Array<DHT.Dht>, opts: any, callback) {
     if(typeof callback === 'undefined') {
       callback = opts;
       opts = {};
