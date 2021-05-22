@@ -13,7 +13,6 @@ export default class Id {
   /**
    * [constructor description]
    * @param {Buffer} public buf [description]
-   * @TODO buffer在TS中的类型应该怎么定义?
    * @note 不同于Nodejs环境下通过id的Buffer直接构建该id; 
    *       web环境下设定为id的String构建id，同时内部初始化ArrayBuffer,用于异或计算等;
    */
@@ -148,6 +147,8 @@ export default class Id {
    * @param {string} key [description]
    * @note nodejs版 key:string => hash => Buffer
    * @note web版 key:string => hash => ArrayBuffer => string
+   *
+   * @todo
    */
   static fromKey(key: string) {
     /** 将字符串key编码位Uint8Array */
@@ -165,29 +166,21 @@ export default class Id {
   /**
    * 将1和0组成的字符串转为数组前缀
    * Example: '101' => [true, false, true]
-   * @param {string} str [description]
+   * @param {string} str 10组成的字符串
    */
   static convertPrefix(str: string) {
-    let res = new Array(str.length);
-    for(let i = 0; i < str.length; i++) {
-      res[i] = str[i] === '1';
-    }
+    let strarr = Array.from(str);
+    let res = strarr.map(char => char === '1' ? true : false);
     return res;
   }
 
   /**
-   * 创建标识符: 0
-   * @TODO TS中buffer的使用
+   * 创建标识符: 0000..000
+   * @todo 此处全0的id生成方式，可能有问题
    */
   static zero() {
-    let buffer = new ArrayBuffer(Id.SIZE * 2);
-    let buf = new Int16Array(buffer);
-    for(let i = 0; i < Id.SIZE; i++) {
-      buf[i] = 0;
-    }
-    return new Id(buf);
+    return new Array(Id.SIZE).fill(0).join('');
   }
-
 
   /**
    * 利用给定的前缀为节点生成一个标识符
