@@ -17,6 +17,13 @@ import RoutingTable from './routingTable';
 import Lookup from './lookup';
 import Contact from './contact';
 
+/**
+ * Kadmelia协议的几种消息对应的功能
+ * ping: 测试节点是否仍在线
+ * store: 在某个节点中存储一个键值对
+ * findNode: 该消息的接收者将返回自己桶中离键值对最近的K个节点
+ * findValue: 该消息的接收者存有请求者所请求的键的时候，将返回相应键的值(每一个RPC消息都包含一个发起者加入的随机值，来确保收到响应消息能够与之匹配)
+ */
 const RPC_FUNCTIONS: ReadonlyArray<string> = ['ping', 'store', 'findNode', 'findValue', 'receive'];
 
 export default class Dht implements DHT.Dht {
