@@ -38,12 +38,26 @@ function toString(arrBuf) {
   return str;
 }
 
-let distance = getDistance(str2buf(a), str2buf(b))
-console.log(distance);
-console.log(toString(distance));
+// let distance = getDistance(str2buf(a), str2buf(b))
+// console.log(distance);
+// console.log(toString(distance));
 
 
+/**
+ * data必须是ArrayBuffer
+ * @type {String}
+ */
+const text = 'zhangjie';
 
+async function digestMessage(message) {
+  /** string => U8A */
+  const msgU8A = new TextEncoder().encode(message);
+  const hash = await crypto.subtle.digest('SHA-256', msgU8A);
+  return hash;
+}
+
+const digestBuffer = await digestMessage(text);
+console.log(digestBuffer.byteLength);
 
 
 // Function.prototype._bind = function(thisObj) {

@@ -8,7 +8,7 @@ dist-ssr
 ts-test.ts
 
 ## reference
-kademlia-dht
+/kademlia-dht/
 
 # production
 /main

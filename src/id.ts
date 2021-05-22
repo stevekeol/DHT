@@ -1,14 +1,13 @@
-/**
- * @TODO 待移除crypto和util
- */
 type Bit = 1 | 0; // 需统一暴露
 
+/**
+ * @note nodejs版的id长度为20位(SHA1);web版的id长度为32位(SHA256)
+ */
 export default class Id {
-  static readonly SIZE: number = 20;
+  static readonly SIZE: number = 32;
   static readonly BIT_SIZE: number = Id.SIZE * 8;
   static readonly SHORT_STR_PRE_LEN: number = 5; //id缩写前缀位数
   static readonly SHORT_STR_SUF_LEN: number = 2; //id缩写后缀位数
-
   buf: Uint8Array;
 
   /**
@@ -30,6 +29,8 @@ export default class Id {
    * @param {string} id 节点的原始id
    * @return {Uint8Array} buf 节点id对应的ArrayBuffer
    * @note 采用ArrayBuffer是为了满足js中按位异或的操作(不能直接异或字符)
+   *
+   * @todo str => U8A: U8A = new TextEncoder().encode(str);
    */
   static getIdBuf(id: string) {
     if(id.length !== Id.SIZE) {
@@ -120,11 +121,7 @@ export default class Id {
    * @param {boolean} short 是否缩写
    */
   toString(short: boolean) {
-    let str = '';
-    for(let i = 0; i < Id.SIZE; i++) {
-      let item = this.buf[i].toString(16);
-      str += item.length > 1 ? item : '0' + item;
-    }
+    let str = this.buf.map(code => code.toString(16).padStart(2, 0)).join('');
     if(short) {
       return `${str.slice(0, Id.SHORT_STR_PRE_LEN)}..${str.slice(str.length - Id.SHORT_STR_SUF_LEN)}`;
     }
@@ -132,14 +129,14 @@ export default class Id {
   }
 
   /**
-   * 随机生成一个节点的标识符,并执行回调
+   * 随机生成一个节点的标识符id,并执行回调
    * @param {Function} callback 成功生成节点标识符后，待执行的回调
    */
   static generate(callback: Function) {
     function randomStr() {
       const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
       let id = '';
-      for (let i = 20; i > 0; --i) id += BASE58[Math.floor(Math.random() * BASE58.length)];
+      for (let i = Id.SIZE; i > 0; --i) id += BASE58[Math.floor(Math.random() * BASE58.length)];
       return id;
     }
 
@@ -147,14 +144,22 @@ export default class Id {
   }
 
   /**
-   * 利用给定的key为节点生成一个标识符
+   * 利用给定的key为节点生成一个标识符id
    * @param {string} key [description]
-   * @TODO SHA1的安全性有问题,需要改进
+   * @note nodejs版 key:string => hash => Buffer
+   * @note web版 key:string => hash => ArrayBuffer => string
    */
   static fromKey(key: string) {
-    let shasum = crypto.createHash('sha1');
-    shasum.update(key);
-    return new Id(shasum.digest());
+    /** 将字符串key编码位Uint8Array */
+    const keyU8A = new TextEncoder().encode(key);
+    const hashBuffer = await crypto.subtle.digest('SHA-A56', keyU8A);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    /**
+     * @todo hashHex此处为64个字符，但Id应该为32位，需要额外处理;
+     */
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    return new Id(hashHex);
   }
 
   /**
