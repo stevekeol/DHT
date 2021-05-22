@@ -183,8 +183,9 @@ export default class Id {
   }
 
   /**
-   * 利用给定的前缀为节点生成一个标识符
+   * 利用给定的前缀为节点生成一个可预测的标识符
    * @param {string | Array<boolean>} prefix 给定的id前缀(10字符串/boolean数组)
+   * @note [true, false, true] => 101(00...0), 括号内Id.SIZE - 3个0
    */
   static fromPrefix(prefix: string | Array<boolean>) {
     if(prefix.length >= Id.SIZE)
@@ -199,12 +200,16 @@ export default class Id {
     return id;
   }
 
-  static fromHex(prefix, suffix) {
-    let id = Id.zero();
-    // 假如buf: Buffer的话，buf.write()固然没问题，但...
-    id.buf.write(prefix, 0, 0, 'hex');
+  /**
+   * 利用给定的前缀和后缀，生成节点的id
+   * @param {[type]} prefix 前缀字符串
+   * @param {[type]} suffix 后缀字符串
+   * @note ('12345', 'abcde') => '12345(00..0)abcde', 括号内10个0
+   */
+  static fromHex(prefix: string, suffix?: string) {
+    let id = `${prefix}${Id.zero().slice(prefix.length)}`;
     if(suffix) {
-      id.buf.write(suffix, Id.SIZE - suffix.length / 2, 0, 'hex');
+      id = `${id.slice(0, Id.SIZE - suffix.length)}${suffix}`;
     }
     return id;
   }
