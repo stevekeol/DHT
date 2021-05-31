@@ -2,6 +2,7 @@
  * lookupList
  * Author: stevekeol
  * createDate: 2021-05-03 17:23
+ * updateDate: 2021-05-31 12:25
  */
 
 import Id from './id';
@@ -42,10 +43,9 @@ export default class LookupList {
    */
   insert(contact: Contact) {
     for(let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      const distance = this.id.compareDistance(contact.id, slot.contact.id);
+      const distance = this.id.compareDistance(contact.id, this.slots[i].contact.id);
       if(distance === 0) return;
-      if(distance < 0) continue;
+      if(distance > 0) continue;
       this.slots.splice(i, 0, {
         contact,
         processed: false
@@ -73,16 +73,15 @@ export default class LookupList {
 
   /**
    * 从该list中丢弃指定的contact. 
-   * Example: 无响应的contacts(unresponding contacts)
+   * Example: 无响应的contacts(unresponding contacts) ???
    * @param {Contact} contact [description]
    * @return 成功丢弃则返回true
    */
   remove(contact: Contact) {
     for(let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      const distance = this.id.compareDistance(contact.id, slot.contact.id);
-      if(distance > 0) return false;
-      if(distance < 0) continue;
+      const distance = this.id.compareDistance(contact.id, this.slots[i].contact.id);
+      if(distance < 0) return false; //?
+      if(distance > 0) continue; //?
       this.slots.splice(i, 1);
       return true;
     }
@@ -97,7 +96,7 @@ export default class LookupList {
   }
 
   /**
-   * 获取该list中contacts的实际个数?
+   * 获取该list中contacts的实际个数
    */
   get length() {
     return this.slots.length;
@@ -117,12 +116,12 @@ export default class LookupList {
   toString(shortIds: any) {
     let res = '<[ ';
     for (let i = 0; i < this.slots.length; ++i) {
-        res += this.slots[i].processed ? '[X]' : '[ ]';
-        res += this.slots[i].contact.toString(shortIds) + ' ';
+      res += this.slots[i].processed ? '[X]' : '[ ]';
+      res += this.slots[i].contact.toString(shortIds) + ' ';
     }
     if (this.slots.length < this._capacity)
-        res += ':' + (this._capacity - this.slots.length) + ': ';
+      res += ':' + (this._capacity - this.slots.length) + ': ';
     res += ']>';
-    return res;    
+    return res;
   }
 } 

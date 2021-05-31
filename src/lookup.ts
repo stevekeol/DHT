@@ -1,28 +1,48 @@
 /**
- * lookup
+ * lookup(为查找某个节点创建的查找器)
  * Author: stevekeol
  * createDate: 2021-05-06 01:50
+ * updateDate: 2021-05-31 12:10
  */
-import EventEmitter from './Utils/EventEmitter';
+import EventEmitter from './utils/EventEmitter';
 import LookupList from './lookupList';
+import Contact from './contact';
+import Id from './id';
 
 export default class Lookup extends EventEmitter {
-  private list;
+  private list: LookupList;
   private concurrents: number = 0;
 
-  constructor(public targetId: any, seeds: any[], public opts: any) {
+  /**
+   * constructor
+   * @param {Id}        public targetId  待查找的节点Id     
+   * @param {Contact[]} seeds  用于查找targetId，传入的种子节点
+   * @param {any}       public opts          [description]
+   */
+  constructor(public targetId: Id, seeds: Contact[], public opts: any) {
     super();
     this.list = new LookupList(targetId, opts.size);
     this.list.insertMany(seeds);
   }
 
-  static proceed(targetId, seeds, opts, callback) {
+  /**
+   * proceed
+   * @param {Id}        targetId [description]
+   * @param {Contact[]} seeds    [description]
+   * @param {any}       opts     [description]
+   * @param {()     =>       {}}        callback [description]
+   */
+  static proceed(targetId: Id, seeds: Contact[], opts: any, callback: () => {}) {
     /** @TODO callback更合适的处理方式 */
-    let lookup = new Lookup(targetId, seeds, opts, callback);
+    let lookup = new Lookup(targetId, seeds, opts);
     lookup.proceed(callback);
     return lookup;
   }
 
+  /**
+   * proceed
+   * @param {() => {}} callback [description]
+   */
   proceed(callback) {
     for(let i = 0; i < this.opts.concurrency; i++) {
       let next = this.list.next();
@@ -34,8 +54,14 @@ export default class Lookup extends EventEmitter {
       return callback(null, []);
   }
 
-  forContact(contact, callback) {
+  /**
+   * [forContact description]
+   * @param {Contact} contact Lookup列表中尚未处理的某个节点
+   * @param {()   =>      {}}        callback [description]
+   */
+  forContact(contact: Contact, callback) {
     const self = this;
+    /** opts.infNode() 在哪儿定义的? */
     this.opts.findNode(contact, this.targetId, (err, contacts) => {
       if(err) {
         self.list.remove(contact);
@@ -43,7 +69,7 @@ export default class Lookup extends EventEmitter {
         self.list.insertMany(contacts);
       }
       const next = self.list.next();
-      if(next != null)
+      if(next)
         return self.forContact(next, callback);
       --self.concurrents;
       if(self.concurrents === 0)

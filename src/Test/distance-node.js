@@ -32,11 +32,13 @@ console.log(getDistance(leftBuf, rightBuf));
 console.log('------')
 
 //test
-crypto.randomBytes(20, (err, buf) => {
-  if(err)
-    console.log(err);
-  console.log(buf);
-});
+// crypto.randomBytes(20, (err, buf) => {
+//   if(err)
+//     console.log(err);
+//   console.log(buf);
+// });
+
+console.log('----===--')
 
 let shasum = crypto.createHash('sha1');
 shasum.update('jiege');

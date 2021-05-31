@@ -60,9 +60,9 @@ export default class Id {
   }
 
   /**
-   * 比较本地id和给定的两个id(first和second)的距离谁更近
-   * first距离更远,返回1;
-   * second距离更远，返回-1;
+   * 比较本地id和给定的两个id(left和right)的距离谁更近
+   * left距离更远,返回1;
+   * right距离更远，返回-1;
    * 距离相等,返回0;
    * @param {Id} left  待比较距离的Id
    * @param {Id} right 待比较距离的Id
@@ -150,7 +150,7 @@ export default class Id {
    *
    * @todo
    */
-  static fromKey(key: string) {
+  static async fromKey(key: string) {
     /** 将字符串key编码位Uint8Array */
     const keyU8A = new TextEncoder().encode(key);
     const hashBuffer = await crypto.subtle.digest('SHA-A56', keyU8A);
@@ -176,7 +176,7 @@ export default class Id {
 
   /**
    * 创建标识符: 0000..000
-   * @todo 此处全0的id生成方式，可能有问题
+   * @todo 此处全0的id生成方式，可能有问题(确实有问题,应该是Id的实例化而非简单的id字符串)
    */
   static zero() {
     return new Array(Id.SIZE).fill(0).join('');
