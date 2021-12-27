@@ -3,26 +3,48 @@
  * Author: stevekeol
  * Date: 2021-12-26 13:00
  */
-import EventEmitter from './utils/EventEmitter'
+import EventEmitter from '../src/utils/EventEmitter'
 
 type Id = Uint8Array
 type Contact = {
-  vectorClock: Number
+  id: Uint8Array;
+  vectorClock: number;
 }
+type BitIndex = number
 
 export default class KBucket extends EventEmitter {
   constructor(
-    public localNodeId = randomBytes(20), 
-    public numberOfNodesPerKBucket = 20,
-    public numberOfNodesToPing = 3,
+    public localNodeId: Uint8Array = randomBytes(20), 
+    public numberOfNodesPerKBucket: Number = 20,
+    public numberOfNodesToPing: Number = 3,
     public getDistance = KBucket.getDistance,
     public arbiter = KBucket.arbiter,
     public metadata,
     public root
   ) {
-    ensureInt8('option.localNodeId as parameter 1', this.localNodeId)
+    super()
     this.metadata = Object.assign({}, this.metadata)
     this.root = KBucket.createNode()
+  }
+
+
+  /**
+   * 决定id的bitIndex位是0还是1
+   * 当bitIndex是0时返回左边的叶节点，是1时返回右边的叶节点
+   * @param {[type]}   node     有left和right叶节点的内部对象
+   * @param {Id}       id       要和localNodeId比对的Id
+   * @param {BitIndex} bitIndex 待比对的bit位
+   */
+  private determineNode (node, id: Id, bitIndex: BitIndex) {
+    const bytesDescriptionByBitIndex = bitIndex >> 3
+    const bitIndexWithinByte = bitIndex % 8
+    if ((id.length <= bytesDescriptionByBitIndex) && (bitIndexWithinByte !== 0)) {
+      return node.left
+    }
+
+    // 判断Uint8Array类型的Id在第x个字节，在第bitIndexWithinByte位是否是1，是的话返回右叶节点，否的话返回左叶节点
+    if (id[bytesDescriptionByBitIndex] & (1 << (7 - bitIndexWithinByte))) { return node.right } 
+    else { return node.left }
   }
 
   /**
@@ -59,6 +81,10 @@ export default class KBucket extends EventEmitter {
    * @param {Contact} contact 将被加入k桶的contact对象
    */
   add (contact: Contact) {
+    let bitIndex = 0, node = this.root
 
+    while (node.contacts === null) {
+      node = this.determineNode(node, contact.id, bitIndex++)
+    }
   }
 }
