@@ -6,7 +6,7 @@
  * UpdateDate: 2021-05-01 22:35
  */
 
-import EventEmitter from './Utils/EventEmitter';
+import EventEmitter from './utils/EventEmitter';
 
 export type Endpoint = string;
 export type Handlers = {

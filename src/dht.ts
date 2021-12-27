@@ -125,7 +125,6 @@ export default class Dht implements DHT.Dht {
     const self = this;
     this.locals[key] = value;
     this.lookupKey(key, (err, id, contacts) => {
-      if(err) return callback(err);
       self.storeToMany(key, value, contacts, callback);
     })
   }

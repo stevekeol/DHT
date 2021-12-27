@@ -1,4 +1,4 @@
-type Bit = 1 | 0; // 需统一暴露
+import { Bit } from './type';
 
 /**
  * @note nodejs版的id长度为20位(SHA1);web版的id长度为32位(SHA256)

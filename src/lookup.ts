@@ -61,7 +61,7 @@ export default class Lookup extends EventEmitter {
    */
   forContact(contact: Contact, callback) {
     const self = this;
-    /** opts.infNode() 在哪儿定义的? */
+    /** opts.findNode() 在哪儿定义的? */
     this.opts.findNode(contact, this.targetId, (err, contacts) => {
       if(err) {
         self.list.remove(contact);

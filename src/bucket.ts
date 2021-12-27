@@ -98,3 +98,10 @@ export default class Bucket {
     return this._store.length === 0 ? null : this._store[0];
   }
 }
+
+/**
+ * kBucket-以二叉树形式实现kad-dht的kBucket
+ * Author: stevekeol
+ * Date: 2021-12-26 13:00
+ */
+
